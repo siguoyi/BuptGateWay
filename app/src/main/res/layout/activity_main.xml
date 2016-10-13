@@ -82,5 +82,5 @@
         android:background="@drawable/selector_button_bg"
         android:textSize="20sp"
         android:textColor="@drawable/selector_button_color"
-        android:text="登   录"/>
+        android:text="@string/login_txt"/>
 </RelativeLayout>

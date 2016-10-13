@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">邮网了</string>
-    <string name="logout_txt">登  出</string>
-    <string name="login_txt">登  录</string>
+    <string name="logout_txt">登   出</string>
+    <string name="login_txt">登   录</string>
     <string name="login_success_txt">登录成功!</string>
     <string name="logout_success_txt">登出成功!</string>
     <string name="account_tips">用户名不能为空!</string>
