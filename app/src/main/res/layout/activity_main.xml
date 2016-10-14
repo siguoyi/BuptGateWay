@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/library"
+    android:background="#f5deaf"
     tools:context="com.buptant.buptgateway.MainActivity">
 
     <ImageView
@@ -32,7 +32,7 @@
             android:gravity="center"
             android:textColor="#000000"
             android:textSize="22sp"
-            android:text="上网位置"/>
+            android:text="位    置:"/>
         <Spinner
             android:id="@+id/sp_network"
             android:layout_width="0dp"

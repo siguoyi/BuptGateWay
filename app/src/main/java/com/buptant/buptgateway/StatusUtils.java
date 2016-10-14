@@ -1,5 +1,7 @@
 package com.buptant.buptgateway;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -9,7 +11,10 @@ import java.util.regex.Pattern;
  * Created by chenlei on 2016/10/14.
  */
 public class StatusUtils {
+    private static final String TAG = StatusUtils.class.getSimpleName();
+
     public static String getTitle(final String s){
+        Log.d(TAG, s);
         String regex;
         String title = "";
         final List<String> list = new ArrayList<String>();

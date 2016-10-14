@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         dataList.add("教室");
         dataList.add("主楼");
         dataList.add("图书馆");
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dataList);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dataList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
@@ -93,10 +93,11 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, R.string.password_tips, Toast.LENGTH_SHORT).show();
                 }else {
                     try {
+                        String url = getUrl((String) spinner.getSelectedItem());
                         if(isConnected){
-                            logout();
+                            logout(url);
                         }else {
-                            login(account, password);
+                            login(url, account, password);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -124,14 +125,35 @@ public class MainActivity extends AppCompatActivity {
                 }else if(msg.what == 3){
                     Toast.makeText(MainActivity.this, R.string.logout_failed_txt, Toast.LENGTH_SHORT).show();
                 }else if(msg.what == 4){
-                    Toast.makeText(MainActivity.this, R.string.logout_success_txt, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "已登录!", Toast.LENGTH_SHORT).show();
+                    isConnected = true;
                     bt_login.setText(R.string.logout_txt);
                 }else if(msg.what == 5){
-                    Toast.makeText(MainActivity.this, R.string.logout_failed_txt, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "未登录!", Toast.LENGTH_SHORT).show();
+                    isConnected = false;
                 }
             }
         };
 
+    }
+
+    private String getUrl(String selectedItem) {
+        String s = "";
+        switch (selectedItem){
+            case StatusConstant.DORMITORY:
+                s = StatusConstant.DORMITORY_URL;
+                break;
+            case StatusConstant.MAIN_BUILDING:
+                s = StatusConstant.MAIN_BUILDING_URL;
+                break;
+            case StatusConstant.CLASSROOM:
+                s = StatusConstant.CLASSROOM_URL;
+                break;
+            case StatusConstant.LIBRARY:
+                s = StatusConstant.LIBRARY_URL;
+                break;
+        }
+        return s;
     }
 
     public void isConnected() {
@@ -169,11 +191,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void login(final String account, final String password){
-        String url = "http://10.3.8.211/";
+    private void login(final String url, final String account, final String password){
+//        String url = "http://10.3.8.211/";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                Log.d(TAG, response);
                 String s = StatusUtils.getTitle(response);
                 if(s.equals(StatusConstant.LOGIN_SUCCESS)){
                     handler.sendEmptyMessage(0);
@@ -199,9 +222,9 @@ public class MainActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
-    private void logout() {
-        String url = "http://10.3.8.211/F.html";
-        StringRequest stringRequest = new StringRequest(url,
+    private void logout(String url) {
+        String logoutUrl = url + "F.html";
+        StringRequest stringRequest = new StringRequest(logoutUrl,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
