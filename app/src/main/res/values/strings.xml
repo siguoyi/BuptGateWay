@@ -6,4 +6,6 @@
     <string name="logout_success_txt">登出成功!</string>
     <string name="account_tips">用户名不能为空!</string>
     <string name="password_tips">密码不能为空!</string>
+    <string name="login_failed_txt">登录失败！</string>
+    <string name="logout_failed_txt">登出失败！</string>
 </resources>

@@ -8,8 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -24,12 +26,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private Spinner spinner;
     private EditText et_account;
     private EditText et_password;
     private Button bt_login;
@@ -41,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private String account;
     private String password;
 
-    private String ip;
+    private List<String> dataList;
+    private ArrayAdapter<String> adapter;
     private boolean isConnected = false;
     private RequestQueue requestQueue;
 
@@ -50,9 +56,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        spinner = (Spinner) findViewById(R.id.sp_network);
         et_account = (EditText) findViewById(R.id.et_account);
         et_password = (EditText) findViewById(R.id.et_password);
         bt_login = (Button) findViewById(R.id.bt_login);
+
+        dataList = new ArrayList<>();
+        dataList.add("宿舍");
+        dataList.add("教室");
+        dataList.add("主楼");
+        dataList.add("图书馆");
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dataList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
         sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -93,22 +109,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                if(msg.what == 0x123){
+                if(msg.what == 0){
                     Toast.makeText(MainActivity.this, R.string.login_success_txt, Toast.LENGTH_SHORT).show();
                     editor.putString("account", account);
                     editor.putString("password", password);
                     Log.d(TAG, account + "  " + password);
                     editor.commit();
                     bt_login.setText(R.string.logout_txt);
-                }else if(msg.what == 0x234){
+                }else if(msg.what == 1){
+                    Toast.makeText(MainActivity.this, R.string.login_failed_txt, Toast.LENGTH_SHORT).show();
+                }else if(msg.what == 2){
                     Toast.makeText(MainActivity.this, R.string.logout_success_txt, Toast.LENGTH_SHORT).show();
                     bt_login.setText(R.string.login_txt);
-                }else if(msg.what == 0x345){
-                    isConnected = true;
+                }else if(msg.what == 3){
+                    Toast.makeText(MainActivity.this, R.string.logout_failed_txt, Toast.LENGTH_SHORT).show();
+                }else if(msg.what == 4){
+                    Toast.makeText(MainActivity.this, R.string.logout_success_txt, Toast.LENGTH_SHORT).show();
                     bt_login.setText(R.string.logout_txt);
-                }else if(msg.what == 0x456){
-                    isConnected = false;
-                    bt_login.setText(R.string.login_txt);
+                }else if(msg.what == 5){
+                    Toast.makeText(MainActivity.this, R.string.logout_failed_txt, Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -136,15 +155,13 @@ public class MainActivity extends AppCompatActivity {
                     int status = p.waitFor();
                     if (status == 0) {
                         flag = true;
-                        handler.sendEmptyMessage(0x345);
+                        handler.sendEmptyMessage(4);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 if(!flag){
-                    handler.sendEmptyMessage(0x456);
+                    handler.sendEmptyMessage(5);
                 }
             }
         }.start();
@@ -157,7 +174,12 @@ public class MainActivity extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                handler.sendEmptyMessage(0x123);
+                String s = StatusUtils.getTitle(response);
+                if(s.equals(StatusConstant.LOGIN_SUCCESS)){
+                    handler.sendEmptyMessage(0);
+                }else if(s.equals(StatusConstant.LOGIN_FAILED)){
+                    handler.sendEmptyMessage(1);
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -183,8 +205,12 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d(TAG, response);
-                        handler.sendEmptyMessage(0x234);
+                        String s = StatusUtils.getTitle(response);
+                        if(s.equals(StatusConstant.LOGOUT_SUCCESS)){
+                            handler.sendEmptyMessage(2);
+                        }else{
+                            handler.sendEmptyMessage(3);
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override

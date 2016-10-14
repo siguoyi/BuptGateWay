@@ -14,8 +14,9 @@
         android:layout_marginStart="10dp"
         android:background="@drawable/buptlogo"
         />
+
     <LinearLayout
-        android:id="@+id/ll_account"
+        android:id="@+id/ll_network_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -23,6 +24,33 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:layout_below="@id/iv_bupt">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="22sp"
+            android:text="上网位置"/>
+        <Spinner
+            android:id="@+id/sp_network"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textColor="#4c06f1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:layout_below="@id/ll_network_type">
 
         <TextView
             android:layout_width="0dp"
